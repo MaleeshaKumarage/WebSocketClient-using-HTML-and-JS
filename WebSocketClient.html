@@ -69,7 +69,61 @@
                 '</tr>';
             }
             socket.onerror=updateState();
+            socket.onmessage=function(event){
+                commsLog.innerHTML+='<tr>'+
+                    '<td>Server</td>'+
+                    '<td>Client</td>'+
+                    '<td>'+htmlEscape(event.data)+'</td>'+
+                    '</tr>';
+                };
+        };
+        function htmlEscape(str){
+            return str.toString()
+            .replace(/&/g,'&amp')
+            .replace(/"/g,'&quot')
+            .replace(/'/g,'&#39')
+            .replace(/</g,'&lt')
+            .replace(/>/g,'&gt')
+        }       
+        function updateState(){
+            function disable(){
+                sendMessage.disable=true;
+                sendButton.disable=true;
+                closeButton.disable=true;
+                recipents.disable=true;
+            }
+            function enable(){
+                sendMessage.disable=false;
+                sendButton.disable=false;
+                closeButton.disable=false;
+                recipents.disable=false;
+            }
+            connectionUrl.disable=true;
+            connectionButton.disable=true;
+            if(!socket){
+                disable();
+            }else{
+                switch(socket.readyState){
+                    case WebSocket.CLOSED:
+                    stateLabel.innerHTML="Closed";
+                    ConnID.innerHTML="ConnID: N/a";
+                    disable();
+                    connectionUrl.disable=false;
+                    connectionButton.disable=false;
+                    break;
+                    case WebSocket.CLOSING:
+                    stateLabel.innerHTML="Closing...";
+                    disable();
+                    break;
+                    case WebSocket.OPEN:
+                    stateLabel.innerHTML="Open";
+                    enable();
+                    break;
+                    default:
+                    stateLabel.innerHTML="unknown WebSocket State : "+htmlEscape(socket.readyState)
 
+                }
+            }
         }
        
     </script>
