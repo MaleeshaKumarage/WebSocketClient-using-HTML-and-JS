@@ -41,4 +41,36 @@
         <p></p>
         </div>
     </body>
+    <script>
+        var connectionUrl=document.getElementById("connectionUrl");
+        var connectionButton=document.getElementById("connectionButton");
+        var stateLabel=document.getElementById("stateLabel");
+        var sendMessage=document.getElementById("sendMessage");
+        var sendButton=document.getElementById("sendButton");
+        var commsLog=document.getElementById("commsLog");
+        var closeButton=document.getElementById("closeButton");
+        var recipents=document.getElementById("recipents");
+        var ConnID=document.getElementById("ConnIDLable");
+
+        connectionUrl.value="ws://localhost:5000";
+
+        connectionButton.onclick=function(){
+            stateLabel.innerHTML="Attempting to connect...";
+            socket=new WebSocket(connectionUrl.value);
+            socket.onopen=function(event){
+                updateState();
+                commsLog.innerHTML+='<tr>'+'<td colspan="3">Connection Opened</td>'+'</tr>';
+            };
+
+            socket.onclose=function(event){
+                updateState();
+                commsLog.innerHTML+='<tr>'+'<td colspan="3">Connection Closed. Code: '+htmlEscape(event.code)
+                +'Reason: ' + htmlEscape(event.reason)+'</td>'+
+                '</tr>';
+            }
+            socket.onerror=updateState();
+
+        }
+       
+    </script>
 </html>
